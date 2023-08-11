@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "784297214188",
+    "project_id": "ayshapro-46440",
+    "storage_bucket": "ayshapro-46440.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784297214188:android:4dc2d0bd16bcc2833ca5c9",
+        "android_client_info": {
+          "package_name": "com.example.aone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784297214188-e4k40ev2vcv5f9vv8hbp7gik4mv623gt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdjuzb2w4ZJOaPrO_w-cPCBgT4jOrDRFA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784297214188-e4k40ev2vcv5f9vv8hbp7gik4mv623gt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
