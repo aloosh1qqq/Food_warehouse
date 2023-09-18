@@ -44,6 +44,12 @@ dependencies:
   progress_state_button: ^1.0.2
   flutter_launcher_icons:
   connectivity_plus: ^4.0.1
+  url_launcher: ^6.1.11
+  image_picker: ^0.8.9
+  path_provider: ^2.0.5
+  file_picker: ^4.5.1
+  firebase_storage: ^11.2.4
+  carousel_slider:
 
 flutter_icons:
   android: true

@@ -1,4 +1,5 @@
 import 'package:aone/firebase_options.dart';
+import 'package:aone/screens/About.dart';
 import 'package:aone/screens/addBill_screen.dart';
 import 'package:aone/screens/addProduct_screen.dart';
 import 'package:aone/screens/avtiveCode_screen.dart';
@@ -19,6 +20,7 @@ late SharedPreferences preferences;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   preferences = await SharedPreferences.getInstance();
+
   // preferences.clear();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
@@ -39,11 +41,7 @@ class MyApp extends StatelessWidget {
             if (preferences.getString("userType") == null) {
               return LogInScreen();
             } else {
-              if (preferences.getString("userType") == "admin") {
-                return const ShoseScreen();
-              } else {
-                return const AddBillScreen();
-              }
+              return const ShoseScreen();
             }
           } else {
             return const ActiveCode();
@@ -58,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/clinet': (context) => const ClinetScreen(),
         '/addBill': (context) => const AddBillScreen(),
         '/viewBill': (context) => const ViewBill(),
+        '/about': (context) => AAbout(),
       },
     );
   }

@@ -15,6 +15,7 @@ class ClinetScreen extends StatefulWidget {
 class _ClinetScreenState extends State<ClinetScreen> {
   @override
   Widget build(BuildContext context) {
+    print(preferences.get("userName"));
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -23,9 +24,8 @@ class _ClinetScreenState extends State<ClinetScreen> {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.logout_outlined),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            print("object");
             Navigator.pop(
               context,
             );
@@ -38,8 +38,10 @@ class _ClinetScreenState extends State<ClinetScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection("users").snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection("users")
+                  .where('sub-admin', isEqualTo: preferences.get("userName"))
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final prod = snapshot.data?.docs.toList();
@@ -64,7 +66,7 @@ class _ClinetScreenState extends State<ClinetScreen> {
                                   Row(
                                     children: [
                                       const Text(
-                                        "اسم المستخدم : ",
+                                        "اسم المندوب : ",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.blueAccent),
@@ -82,7 +84,7 @@ class _ClinetScreenState extends State<ClinetScreen> {
                                   Row(
                                     children: [
                                       const Text(
-                                        "عنوان المستخدم : ",
+                                        "عنوان المندوب : ",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.blueAccent),
@@ -136,7 +138,7 @@ class _ClinetScreenState extends State<ClinetScreen> {
                                   Row(
                                     children: [
                                       const Text(
-                                        "نوع المستخدم : ",
+                                        "نوع المندوب : ",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.blueAccent),
@@ -148,98 +150,108 @@ class _ClinetScreenState extends State<ClinetScreen> {
                                       ),
                                     ],
                                   ),
-                                  IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('تأكيد الحذف'),
-                                              content: const Text(
-                                                  'هل أنت متأكد من رغبتك في حذف هذا المستخدم؟'),
-                                              actions: [
-                                                TextButton(
-                                                  child: const Text('إلغاء'),
-                                                  onPressed: () {
-                                                    Navigator.of(context)
-                                                        .pop(); // إغلاق حوار التأكيد
-                                                  },
-                                                ),
-                                                IconButton(
-                                                  icon: const Text('حذف'),
-                                                  onPressed: () {
-                                                    // قم بحذف المستند من Firestore
-                                                    FirebaseFirestore.instance
-                                                        .collection('users')
-                                                        .doc(prod[index]["uid"])
-                                                        .delete()
-                                                        .then((value) {
-                                                      Fluttertoast.showToast(
-                                                          msg: "تم حذف المنتج");
-                                                      Navigator.of(context)
-                                                          .pop(); // إغلاق حوار التأكيد
-                                                      // يمكنك أيضًا إظهار رسالة تأكيد الحذف هنا
-                                                    }).catchError((error) {
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "$error تم حذف المنتج");
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title:
+                                                      const Text('تأكيد الحذف'),
+                                                  content: const Text(
+                                                      'هل أنت متأكد من رغبتك في حذف هذا المستخدم؟'),
+                                                  actions: [
+                                                    TextButton(
+                                                      child:
+                                                          const Text('إلغاء'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(); // إغلاق حوار التأكيد
+                                                      },
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Text('حذف'),
+                                                      onPressed: () {
+                                                        // قم بحذف المستند من Firestore
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .doc(prod[index]
+                                                                ["uid"])
+                                                            .delete()
+                                                            .then((value) {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "تم حذف المنتج");
+                                                          Navigator.of(context)
+                                                              .pop(); // إغلاق حوار التأكيد
+                                                          // يمكنك أيضًا إظهار رسالة تأكيد الحذف هنا
+                                                        }).catchError((error) {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "$error تم حذف ");
 
-                                                      Navigator.of(context)
-                                                          .pop(); // إغلاق حوار التأكيد
-                                                      // يمكنك أيضًا إظهار رسالة خطأ هنا
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                                          Navigator.of(context)
+                                                              .pop(); // إغلاق حوار التأكيد
+                                                          // يمكنك أيضًا إظهار رسالة خطأ هنا
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
                                             );
                                           },
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ))
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          )),
+                                      preferences.getString("userType") ==
+                                              "admin"
+                                          ? IconButton(
+                                              onPressed: () async {
+                                                final CollectionReference user =
+                                                    FirebaseFirestore.instance
+                                                        .collection('users');
+                                                if (prod[index]["type"]
+                                                        .toString() ==
+                                                    "مندوب") {
+                                                  await user
+                                                      .doc(prod[index].id)
+                                                      .update({
+                                                    'type': "مدير"
+                                                  }).then((value) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "المندوب اصبح مدير");
+                                                  });
+                                                } else {
+                                                  await user
+                                                      .doc(prod[index].id)
+                                                      .update({
+                                                    'type': "مندوب"
+                                                  }).then((value) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "المدير اصبح مندوب");
+                                                  });
+                                                }
+                                              },
+                                              icon: Icon(
+                                                prod[index]["type"]
+                                                            .toString() ==
+                                                        "مندوب"
+                                                    ? Icons.add
+                                                    : Icons.remove,
+                                                color: Colors.green[400],
+                                              ))
+                                          : Container(),
+                                    ],
+                                  )
                                 ],
                               ),
-
-                              // FirebaseFirestore.instance
-                              //                                     .collection('users')
-                              //                                     .doc(prod[index]["uid"])
-                              //                                     .delete()
-                              //                                     .then((value) {
-                              //                                   Fluttertoast.showToast(
-                              //                                       msg: "تم حذف المنتج");
-                              //                                 }).catchError((error) {
-                              //                                   Fluttertoast.showToast(
-                              //                                       msg: "لم يتم الحذف");
-                              //                                 });
-                              // const SizedBox(
-                              //   width: 15,
-                              // ),
-                              // Container(
-                              //   padding:
-                              //       const EdgeInsets.symmetric(horizontal: 20),
-                              //   margin: const EdgeInsets.only(right: 5),
-                              //   decoration: BoxDecoration(
-                              //       borderRadius: BorderRadius.circular(25),
-                              //       color:
-                              //           const Color.fromARGB(255, 28, 35, 39)),
-                              //   child: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.center,
-                              //     children: [
-                              //       Text(
-                              //         prod[index]["qrScan"].toString(),
-                              //         style: const TextStyle(
-                              //             fontSize: 14, color: Colors.white),
-                              //       ),
-                              //       Text(
-                              //         prod[index]["qrTime"].toString(),
-                              //         style: const TextStyle(
-                              //             fontSize: 14, color: Colors.white),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
                             ],
                           ),
                         );
@@ -250,6 +262,24 @@ class _ClinetScreenState extends State<ClinetScreen> {
                   );
                 }
               }),
+        ),
+      ),
+      floatingActionButton: Container(
+        height: 75,
+        width: 75,
+        decoration: BoxDecoration(
+          color: Colors.blueAccent,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: IconButton(
+          iconSize: 40,
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, "/insert");
+          },
         ),
       ),
     );

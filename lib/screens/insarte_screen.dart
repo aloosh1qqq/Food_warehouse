@@ -28,7 +28,7 @@ class _InsertScreenState extends State<InsertScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
-        title: const Text("تسجيل مستخدم"),
+        title: const Text("تسجيل مندوب"),
       ),
       body: !isLoad
           ? Padding(
@@ -108,9 +108,10 @@ class _InsertScreenState extends State<InsertScreen> {
     userModel.email = user!.email;
     userModel.uid = user.uid;
 
-    userModel.type = "user";
+    userModel.type = "مندوب";
     userModel.address = addresController.text;
     userModel.phone = phoneContorller.text;
+    userModel.sub_admin = preferences.get("userName").toString();
     // sending our values
     await firebaseFirestore
         .collection("users")
@@ -124,11 +125,12 @@ class _InsertScreenState extends State<InsertScreen> {
 
     UserModel u = UserModel.fromMap(snapshot.data());
     print(u);
+    Fluttertoast.showToast(
+        msg: "تم انشاء مندوب جديد ب أسم ${emailController.text}");
     phoneContorller.clear();
     addresController.clear();
     emailController.clear();
     passwordController.clear();
-    Fluttertoast.showToast(msg: "Account Created Successfully ");
 
     // Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => true);
   }

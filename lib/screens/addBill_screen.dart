@@ -78,36 +78,11 @@ class _AddBillScreenState extends State<AddBillScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-
-    Future<void> logOut() async {
-      try {
-        await _auth.signOut();
-        // User successfully logged out
-      } catch (e) {
-        // An error occurred while logging out
-        print('Error: $e');
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
         title: const Text('اضافة طلبية'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_sharp),
-            onPressed: () {
-              logOut();
-              preferences.clear();
-              Navigator.replace(context,
-                  oldRoute: ModalRoute.of(context)!,
-                  newRoute: MaterialPageRoute(
-                      builder: (context) => const ActiveCode()));
-            },
-          )
-        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -117,140 +92,152 @@ class _AddBillScreenState extends State<AddBillScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('product')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  List<DropdownMenuItem> clientItem = [];
-                  if (!snapshot.hasData) {
-                    return const CircularProgressIndicator();
-                  } else {
-                    final clients = snapshot.data?.docs.reversed.toList();
-                    for (var client in clients!) {
-                      clientItem.add(DropdownMenuItem(
-                        value: client,
-                        child: Text(client['name']),
-                      ));
-                    }
-                    return DropdownButton(
-                        alignment: Alignment.center,
-                        hint: Text(
-                          name,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        isExpanded: true,
-                        items: clientItem,
-                        onChanged: (v) {
-                          setState(() {
-                            name = v['name'];
-                            price = v['price'];
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('product')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    List<DropdownMenuItem> clientItem = [];
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      final clients = snapshot.data?.docs.reversed.toList();
+                      for (var client in clients!) {
+                        clientItem.add(DropdownMenuItem(
+                          value: client,
+                          child: Text(client['name']),
+                        ));
+                      }
+                      return DropdownButton(
+                          alignment: Alignment.center,
+                          hint: Text(
+                            name,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          isExpanded: true,
+                          items: clientItem,
+                          onChanged: (v) {
+                            setState(() {
+                              name = v['name'];
+                              price = v['price'];
+                            });
                           });
-                        });
-                  }
-                }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  price,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                const Text(
-                  " :السعر",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            TextFieldWidget(
-              controller: quanttiContorller,
-              type: TextInputType.number,
-              hint: 'الكمية ',
-            ),
-            TextFieldWidget(
-              controller: payContorller,
-              hint: 'الدفعة',
-              type: TextInputType.number,
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              children: [
-                Flexible(
-                  child: BaiscBottomWidget(
-                    text: "اضافة ",
-                    onTap: () async {
-                      if (price != '0' && quanttiContorller.text.isNotEmpty) {
-                        if (barcode != null) {
-                          BillModule p1 = BillModule(
-                              name: name,
-                              quantity: quanttiContorller.text,
-                              price: price,
-                              qrTime:
-                                  "التاريخ: ${time.year}/${time.day}/${time.month} الوقت:${time.hour}:${time.minute}",
-                              qrScan: barcode!.code,
-                              pay: payContorller.text.isNotEmpty
-                                  ? payContorller.text
-                                  : "0");
-                          print(result);
-                          if (result != ConnectivityResult.none) {
-                            var collection =
-                                FirebaseFirestore.instance.collection("bill");
-                            collection.add(p1.toJson()).then((value) => {
-                                  Fluttertoast.showToast(
-                                      msg: "bill Created Successfully "),
-                                  name = 'اختر المنتج',
-                                  price = '0',
-                                  quanttiContorller.clear(),
-                                  payContorller.clear(),
-                                  barcode = null,
-                                });
+                    }
+                  }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    price,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  const Text(
+                    " :السعر",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              TextFieldWidget(
+                controller: quanttiContorller,
+                type: TextInputType.number,
+                hint: 'الكمية ',
+              ),
+              TextFieldWidget(
+                controller: payContorller,
+                hint: 'الدفعة',
+                type: TextInputType.number,
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: BaiscBottomWidget(
+                      text: "اضافة ",
+                      onTap: () async {
+                        if (price != '0' && quanttiContorller.text.isNotEmpty) {
+                          if (barcode != null) {
+                            BillModule p1 = BillModule(
+                                name: name,
+                                sub: preferences.get("userName").toString(),
+                                quantity: quanttiContorller.text,
+                                price: price,
+                                qrTime: " الوقت:${time.hour}:${time.minute}",
+                                qrdate:
+                                    "التاريخ: ${time.year}/${time.day}/${time.month}",
+                                qrScan: barcode!.code,
+                                pay: payContorller.text.isNotEmpty
+                                    ? payContorller.text
+                                    : "0",
+                                pay1: "0",
+                                pay2: "0",
+                                pay3: "0",
+                                user: preferences.getString('useradmin'));
+                            print(result);
+                            if (result != ConnectivityResult.none) {
+                              var collection =
+                                  FirebaseFirestore.instance.collection("bill");
+                              collection.add(p1.toJson()).then((value) => {
+                                    Fluttertoast.showToast(
+                                        msg: "bill Created Successfully "),
+                                    name = 'اختر المنتج',
+                                    price = '0',
+                                    quanttiContorller.clear(),
+                                    payContorller.clear(),
+                                    barcode = null,
+                                  });
+                            } else {
+                              String billJson = jsonEncode(p1.toJson());
+                              await preferences.setString('bill', billJson);
+                              name = 'اختر المنتج';
+                              price = '0';
+                              quanttiContorller.clear();
+                              barcode = null;
+                              Fluttertoast.showToast(
+                                  msg: "تم الحفظ في الذاكرة");
+                            }
                           } else {
-                            String billJson = jsonEncode(p1.toJson());
-                            await preferences.setString('bill', billJson);
-                            name = 'اختر المنتج';
-                            price = '0';
-                            quanttiContorller.clear();
-                            barcode = null;
-                            Fluttertoast.showToast(msg: "تم الحفظ في الذاكرة");
+                            Fluttertoast.showToast(msg: "يرجى مسح الباركود");
                           }
                         } else {
-                          Fluttertoast.showToast(msg: "يرجى مسح الباركود");
+                          Fluttertoast.showToast(msg: "يجب تعبئة كل الحقول ");
                         }
-                      } else {
-                        Fluttertoast.showToast(msg: "يجب تعبئة كل الحقول ");
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                Flexible(
-                  child: BaiscBottomWidget(
-                    onTap: () {
-                      setState(() {
-                        show = true;
-                      });
-                      // Navigator.pushNamed(context, "/qrscan");
-                    },
-                    text: "QR مسح",
+                  Flexible(
+                    child: BaiscBottomWidget(
+                      onTap: () {
+                        setState(() {
+                          show = true;
+                        });
+                        // Navigator.pushNamed(context, "/qrscan");
+                      },
+                      text: "QR مسح",
+                    ),
                   ),
-                ),
-              ],
-            ),
-            show
-                ? SizedBox(
-                    height: 300,
-                    width: 300,
-                    child: buildQrView(context),
-                  )
-                : Container(),
-          ],
+                ],
+              ),
+              show
+                  ? SizedBox(
+                      height: 300,
+                      width: 300,
+                      child: buildQrView(context),
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

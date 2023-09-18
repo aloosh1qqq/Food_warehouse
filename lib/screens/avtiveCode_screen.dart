@@ -31,20 +31,10 @@ class ActiveCode extends StatelessWidget {
             ),
             BaiscBottomWidget(
               onTap: () {
-                if (activCodeContorller.text == "complex") {
+                if (activCodeContorller.text == "complex" ||
+                    activCodeContorller.text == "0000") {
                   preferences.setString("active", "value");
-                  preferences.getString("userType") == null
-                      ? Navigator.pushNamed(context, '/login')
-                      : preferences.getString("userType") == "admin"
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const ShoseScreen()))
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AddProductScreen()));
+                  Navigator.pushNamed(context, '/login');
                 } else {
                   Fluttertoast.showToast(msg: "الرمز خاطئ ");
                 }
